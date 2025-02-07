@@ -1,0 +1,62 @@
+# Author: Joel Gabud, Mohamed Haniff
+# Student ID: 100931421
+# Date: 2025-02-05
+# Document Type: Group Lab
+# Description: Using a program to store and retrieve information related to a user's reading list.
+
+import csv
+
+def add_book(title, author, year):
+    with open('books.csv', mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([title, author, year])
+
+def retrieve_books():
+    with open('books.csv', mode='r', newline='') as file:
+        reader = csv.reader(file)
+        books = list(reader)
+        if books:
+            for book in books:
+                print(f"Title: {book[0]}, Author: {book[1]}, Year: {book[2]}")
+        else:
+            print("No books in the reading list.")
+
+def search_book(title):
+    with open('books.csv', mode='r', newline='') as file:
+        reader = csv.reader(file)
+        found = False
+        for book in reader:
+            if book[0].lower() == title.lower():
+                print(f"Title: {book[0]}, Author: {book[1]}, Year: {book[2]}")
+                found = True
+                break
+        if not found:
+            print(f"No book found with title: {title}")
+
+def main():
+    while True:
+        print("\nMenu:")
+        print("1. Add a book")
+        print("2. Retrieve books")
+        print("3. Search for a book")
+        print("4. Quit")
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            title = input("Enter book title: ")
+            author = input("Enter author's name: ")
+            year = input("Enter year of publication: ")
+            add_book(title, author, year)
+        elif choice == '2':
+            retrieve_books()
+        elif choice == '3':
+            title = input("Enter book title to search: ")
+            search_book(title)
+        elif choice == '4':
+            print("Exiting the program.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == '__main__':
+    main()
