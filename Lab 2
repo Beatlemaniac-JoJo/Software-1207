@@ -1,37 +1,68 @@
 # Author: Joel Gabud, Mohamed Haniff
 # Student ID: 100931421
-# Date: 2025-02-05
+# Date: 2025-02-06
 # Document Type: Group Lab
 # Description: Using a program to store and retrieve information related to a user's reading list.
 
 import csv
 
+
 def add_book(title, author, year):
+    if not title or not author or not year.isdigit():
+        print("Invalid input. Please provide valid title, author, and year.")
+        return
+
     with open('books.csv', mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([title, author, year])
 
+
 def retrieve_books():
-    with open('books.csv', mode='r', newline='') as file:
-        reader = csv.reader(file)
-        books = list(reader)
-        if books:
-            for book in books:
-                print(f"Title: {book[0]}, Author: {book[1]}, Year: {book[2]}")
-        else:
-            print("No books in the reading list.")
+    try:
+        with open('books.csv', mode='r', newline='') as file:
+            reader = csv.reader(file)
+            books = list(reader)
+            if books:
+                for book in books:
+                    print(f"Title: {book[0]}, Author: {book[1]}, Year: {book[2]}")
+            else:
+                print("No books in the reading list.")
+    except FileNotFoundError:
+        print("File not found. Please add a book first.")
+
 
 def search_book(title):
-    with open('books.csv', mode='r', newline='') as file:
-        reader = csv.reader(file)
-        found = False
-        for book in reader:
-            if book[0].lower() == title.lower():
-                print(f"Title: {book[0]}, Author: {book[1]}, Year: {book[2]}")
-                found = True
-                break
-        if not found:
-            print(f"No book found with title: {title}")
+    try:
+        with open('books.csv', mode='r', newline='') as file:
+            reader = csv.reader(file)
+            found = False
+            for book in reader:
+                if book[0].lower() == title.lower():
+                    print(f"Title: {book[0]}, Author: {book[1]}, Year: {book[2]}")
+                    found = True
+                    break
+            if not found:
+                print(f"No book found with title: {title}")
+    except FileNotFoundError:
+        print("File not found. Please add a book first.")
+
+
+def delete_book(title):
+    try:
+        books = []
+        with open('books.csv', mode='r', newline='') as file:
+            reader = csv.reader(file)
+            for book in reader:
+                if book[0].lower() != title.lower():
+                    books.append(book)
+
+        with open('books.csv', mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerows(books)
+        print(f"Book '{title}' has been deleted.")
+    except FileNotFoundError:
+        print("File not found. Please add a book first.")
+
 
 def main():
     while True:
@@ -39,7 +70,8 @@ def main():
         print("1. Add a book")
         print("2. Retrieve books")
         print("3. Search for a book")
-        print("4. Quit")
+        print("4. Delete a book")
+        print("5. Quit")
         choice = input("Enter your choice: ")
 
         if choice == '1':
@@ -53,10 +85,14 @@ def main():
             title = input("Enter book title to search: ")
             search_book(title)
         elif choice == '4':
+            title = input("Enter book title to delete: ")
+            delete_book(title)
+        elif choice == '5':
             print("Exiting the program.")
             break
         else:
             print("Invalid choice. Please try again.")
+
 
 if __name__ == '__main__':
     main()
